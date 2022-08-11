@@ -1,0 +1,49 @@
+specVersion: 0.0.4
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: WethVault
+    network: matic
+    source:
+      address: "0x3fd939B017b31eaADF9ae50C7fF7Fa5c0661d47C"
+      abi: Vault
+      startBlock: 17202893
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - ApprovalForAll
+        - BorrowToken
+        - CreateVault
+        - DepositCollateral
+        - DestroyVault
+        - LiquidateVault
+        - OwnershipTransferred
+        - PayBackToken
+        - Transfer
+        - TransferVault
+        - WithdrawCollateral
+      abis:
+        - name: Vault
+          file: WethVault\abis\Vault.json
+      eventHandlers:
+        - event: BorrowToken(uint256,uint256)
+          handler: handleBorrowToken
+        - event: CreateVault(uint256,address)
+          handler: handleCreateVault
+        - event: DepositCollateral(uint256,uint256)
+          handler: handleDepositCollateral
+        - event: DestroyVault(uint256)
+          handler: handleDestroyVault
+        - event: LiquidateVault(uint256,address,address,uint256,uint256,uint256)
+          handler: handleLiquidateVault
+        - event: PayBackToken(uint256,uint256,uint256)
+          handler: handlePayBackToken
+        - event: TransferVault(uint256,address,address)
+          handler: handleTransferVault
+        - event: WithdrawCollateral(uint256,uint256)
+          handler: handleWithdrawCollateral
+      file: WethVault\WethVault.wasm

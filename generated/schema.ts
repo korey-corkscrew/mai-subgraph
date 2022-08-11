@@ -11,7 +11,7 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
-export class ExampleEntity extends Entity {
+export class Vault extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -19,18 +19,18 @@ export class ExampleEntity extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save ExampleEntity entity without an ID");
+    assert(id != null, "Cannot save Vault entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type ExampleEntity must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type Vault must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("ExampleEntity", id.toString(), this);
+      store.set("Vault", id.toString(), this);
     }
   }
 
-  static load(id: string): ExampleEntity | null {
-    return changetype<ExampleEntity | null>(store.get("ExampleEntity", id));
+  static load(id: string): Vault | null {
+    return changetype<Vault | null>(store.get("Vault", id));
   }
 
   get id(): string {
@@ -42,35 +42,43 @@ export class ExampleEntity extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get count(): BigInt {
-    let value = this.get("count");
+  get collateralToken(): Bytes {
+    let value = this.get("collateralToken");
+    return value!.toBytes();
+  }
+
+  set collateralToken(value: Bytes) {
+    this.set("collateralToken", Value.fromBytes(value));
+  }
+
+  get tokenCount(): BigInt {
+    let value = this.get("tokenCount");
     return value!.toBigInt();
   }
 
-  set count(value: BigInt) {
-    this.set("count", Value.fromBigInt(value));
+  set tokenCount(value: BigInt) {
+    this.set("tokenCount", Value.fromBigInt(value));
   }
 
-  get owner(): Bytes {
-    let value = this.get("owner");
-    return value!.toBytes();
+  get tokens(): Array<string> | null {
+    let value = this.get("tokens");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
   }
 
-  set owner(value: Bytes) {
-    this.set("owner", Value.fromBytes(value));
-  }
-
-  get approved(): Bytes {
-    let value = this.get("approved");
-    return value!.toBytes();
-  }
-
-  set approved(value: Bytes) {
-    this.set("approved", Value.fromBytes(value));
+  set tokens(value: Array<string> | null) {
+    if (!value) {
+      this.unset("tokens");
+    } else {
+      this.set("tokens", Value.fromStringArray(<Array<string>>value));
+    }
   }
 }
 
-export class LinkVaultApproval extends Entity {
+export class Token extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -78,20 +86,18 @@ export class LinkVaultApproval extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save LinkVaultApproval entity without an ID");
+    assert(id != null, "Cannot save Token entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type LinkVaultApproval must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type Token must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("LinkVaultApproval", id.toString(), this);
+      store.set("Token", id.toString(), this);
     }
   }
 
-  static load(id: string): LinkVaultApproval | null {
-    return changetype<LinkVaultApproval | null>(
-      store.get("LinkVaultApproval", id)
-    );
+  static load(id: string): Token | null {
+    return changetype<Token | null>(store.get("Token", id));
   }
 
   get id(): string {
@@ -101,24 +107,6 @@ export class LinkVaultApproval extends Entity {
 
   set id(value: string) {
     this.set("id", Value.fromString(value));
-  }
-
-  get owner(): Bytes {
-    let value = this.get("owner");
-    return value!.toBytes();
-  }
-
-  set owner(value: Bytes) {
-    this.set("owner", Value.fromBytes(value));
-  }
-
-  get approved(): Bytes {
-    let value = this.get("approved");
-    return value!.toBytes();
-  }
-
-  set approved(value: Bytes) {
-    this.set("approved", Value.fromBytes(value));
   }
 
   get tokenId(): BigInt {
@@ -129,42 +117,23 @@ export class LinkVaultApproval extends Entity {
   set tokenId(value: BigInt) {
     this.set("tokenId", Value.fromBigInt(value));
   }
-}
 
-export class LinkVaultApprovalForAll extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
+  get collateralAmount(): BigInt {
+    let value = this.get("collateralAmount");
+    return value!.toBigInt();
   }
 
-  save(): void {
-    let id = this.get("id");
-    assert(
-      id != null,
-      "Cannot save LinkVaultApprovalForAll entity without an ID"
-    );
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type LinkVaultApprovalForAll must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("LinkVaultApprovalForAll", id.toString(), this);
-    }
+  set collateralAmount(value: BigInt) {
+    this.set("collateralAmount", Value.fromBigInt(value));
   }
 
-  static load(id: string): LinkVaultApprovalForAll | null {
-    return changetype<LinkVaultApprovalForAll | null>(
-      store.get("LinkVaultApprovalForAll", id)
-    );
+  get debtAmount(): BigInt {
+    let value = this.get("debtAmount");
+    return value!.toBigInt();
   }
 
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
+  set debtAmount(value: BigInt) {
+    this.set("debtAmount", Value.fromBigInt(value));
   }
 
   get owner(): Bytes {
@@ -176,616 +145,12 @@ export class LinkVaultApprovalForAll extends Entity {
     this.set("owner", Value.fromBytes(value));
   }
 
-  get operator(): Bytes {
-    let value = this.get("operator");
-    return value!.toBytes();
-  }
-
-  set operator(value: Bytes) {
-    this.set("operator", Value.fromBytes(value));
-  }
-
-  get approved(): boolean {
-    let value = this.get("approved");
+  get active(): boolean {
+    let value = this.get("active");
     return value!.toBoolean();
   }
 
-  set approved(value: boolean) {
-    this.set("approved", Value.fromBoolean(value));
-  }
-}
-
-export class LinkVaultBorrowToken extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save LinkVaultBorrowToken entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type LinkVaultBorrowToken must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("LinkVaultBorrowToken", id.toString(), this);
-    }
-  }
-
-  static load(id: string): LinkVaultBorrowToken | null {
-    return changetype<LinkVaultBorrowToken | null>(
-      store.get("LinkVaultBorrowToken", id)
-    );
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get vaultID(): BigInt {
-    let value = this.get("vaultID");
-    return value!.toBigInt();
-  }
-
-  set vaultID(value: BigInt) {
-    this.set("vaultID", Value.fromBigInt(value));
-  }
-
-  get amount(): BigInt {
-    let value = this.get("amount");
-    return value!.toBigInt();
-  }
-
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
-  }
-}
-
-export class LinkVaultCreateVault extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save LinkVaultCreateVault entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type LinkVaultCreateVault must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("LinkVaultCreateVault", id.toString(), this);
-    }
-  }
-
-  static load(id: string): LinkVaultCreateVault | null {
-    return changetype<LinkVaultCreateVault | null>(
-      store.get("LinkVaultCreateVault", id)
-    );
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get vaultID(): BigInt {
-    let value = this.get("vaultID");
-    return value!.toBigInt();
-  }
-
-  set vaultID(value: BigInt) {
-    this.set("vaultID", Value.fromBigInt(value));
-  }
-
-  get creator(): Bytes {
-    let value = this.get("creator");
-    return value!.toBytes();
-  }
-
-  set creator(value: Bytes) {
-    this.set("creator", Value.fromBytes(value));
-  }
-}
-
-export class LinkVaultDepositCollateral extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(
-      id != null,
-      "Cannot save LinkVaultDepositCollateral entity without an ID"
-    );
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type LinkVaultDepositCollateral must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("LinkVaultDepositCollateral", id.toString(), this);
-    }
-  }
-
-  static load(id: string): LinkVaultDepositCollateral | null {
-    return changetype<LinkVaultDepositCollateral | null>(
-      store.get("LinkVaultDepositCollateral", id)
-    );
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get vaultID(): BigInt {
-    let value = this.get("vaultID");
-    return value!.toBigInt();
-  }
-
-  set vaultID(value: BigInt) {
-    this.set("vaultID", Value.fromBigInt(value));
-  }
-
-  get amount(): BigInt {
-    let value = this.get("amount");
-    return value!.toBigInt();
-  }
-
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
-  }
-}
-
-export class LinkVaultDestroyVault extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(
-      id != null,
-      "Cannot save LinkVaultDestroyVault entity without an ID"
-    );
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type LinkVaultDestroyVault must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("LinkVaultDestroyVault", id.toString(), this);
-    }
-  }
-
-  static load(id: string): LinkVaultDestroyVault | null {
-    return changetype<LinkVaultDestroyVault | null>(
-      store.get("LinkVaultDestroyVault", id)
-    );
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get vaultID(): BigInt {
-    let value = this.get("vaultID");
-    return value!.toBigInt();
-  }
-
-  set vaultID(value: BigInt) {
-    this.set("vaultID", Value.fromBigInt(value));
-  }
-}
-
-export class LinkVaultLiquidateVault extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(
-      id != null,
-      "Cannot save LinkVaultLiquidateVault entity without an ID"
-    );
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type LinkVaultLiquidateVault must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("LinkVaultLiquidateVault", id.toString(), this);
-    }
-  }
-
-  static load(id: string): LinkVaultLiquidateVault | null {
-    return changetype<LinkVaultLiquidateVault | null>(
-      store.get("LinkVaultLiquidateVault", id)
-    );
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get vaultID(): BigInt {
-    let value = this.get("vaultID");
-    return value!.toBigInt();
-  }
-
-  set vaultID(value: BigInt) {
-    this.set("vaultID", Value.fromBigInt(value));
-  }
-
-  get owner(): Bytes {
-    let value = this.get("owner");
-    return value!.toBytes();
-  }
-
-  set owner(value: Bytes) {
-    this.set("owner", Value.fromBytes(value));
-  }
-
-  get buyer(): Bytes {
-    let value = this.get("buyer");
-    return value!.toBytes();
-  }
-
-  set buyer(value: Bytes) {
-    this.set("buyer", Value.fromBytes(value));
-  }
-
-  get debtRepaid(): BigInt {
-    let value = this.get("debtRepaid");
-    return value!.toBigInt();
-  }
-
-  set debtRepaid(value: BigInt) {
-    this.set("debtRepaid", Value.fromBigInt(value));
-  }
-
-  get collateralLiquidated(): BigInt {
-    let value = this.get("collateralLiquidated");
-    return value!.toBigInt();
-  }
-
-  set collateralLiquidated(value: BigInt) {
-    this.set("collateralLiquidated", Value.fromBigInt(value));
-  }
-
-  get closingFee(): BigInt {
-    let value = this.get("closingFee");
-    return value!.toBigInt();
-  }
-
-  set closingFee(value: BigInt) {
-    this.set("closingFee", Value.fromBigInt(value));
-  }
-}
-
-export class LinkVaultOwnershipTransferred extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(
-      id != null,
-      "Cannot save LinkVaultOwnershipTransferred entity without an ID"
-    );
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type LinkVaultOwnershipTransferred must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("LinkVaultOwnershipTransferred", id.toString(), this);
-    }
-  }
-
-  static load(id: string): LinkVaultOwnershipTransferred | null {
-    return changetype<LinkVaultOwnershipTransferred | null>(
-      store.get("LinkVaultOwnershipTransferred", id)
-    );
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get previousOwner(): Bytes {
-    let value = this.get("previousOwner");
-    return value!.toBytes();
-  }
-
-  set previousOwner(value: Bytes) {
-    this.set("previousOwner", Value.fromBytes(value));
-  }
-
-  get newOwner(): Bytes {
-    let value = this.get("newOwner");
-    return value!.toBytes();
-  }
-
-  set newOwner(value: Bytes) {
-    this.set("newOwner", Value.fromBytes(value));
-  }
-}
-
-export class LinkVaultPayBackToken extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(
-      id != null,
-      "Cannot save LinkVaultPayBackToken entity without an ID"
-    );
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type LinkVaultPayBackToken must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("LinkVaultPayBackToken", id.toString(), this);
-    }
-  }
-
-  static load(id: string): LinkVaultPayBackToken | null {
-    return changetype<LinkVaultPayBackToken | null>(
-      store.get("LinkVaultPayBackToken", id)
-    );
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get vaultID(): BigInt {
-    let value = this.get("vaultID");
-    return value!.toBigInt();
-  }
-
-  set vaultID(value: BigInt) {
-    this.set("vaultID", Value.fromBigInt(value));
-  }
-
-  get amount(): BigInt {
-    let value = this.get("amount");
-    return value!.toBigInt();
-  }
-
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
-  }
-
-  get closingFee(): BigInt {
-    let value = this.get("closingFee");
-    return value!.toBigInt();
-  }
-
-  set closingFee(value: BigInt) {
-    this.set("closingFee", Value.fromBigInt(value));
-  }
-}
-
-export class LinkVaultTransfer extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save LinkVaultTransfer entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type LinkVaultTransfer must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("LinkVaultTransfer", id.toString(), this);
-    }
-  }
-
-  static load(id: string): LinkVaultTransfer | null {
-    return changetype<LinkVaultTransfer | null>(
-      store.get("LinkVaultTransfer", id)
-    );
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get from(): Bytes {
-    let value = this.get("from");
-    return value!.toBytes();
-  }
-
-  set from(value: Bytes) {
-    this.set("from", Value.fromBytes(value));
-  }
-
-  get to(): Bytes {
-    let value = this.get("to");
-    return value!.toBytes();
-  }
-
-  set to(value: Bytes) {
-    this.set("to", Value.fromBytes(value));
-  }
-
-  get tokenId(): BigInt {
-    let value = this.get("tokenId");
-    return value!.toBigInt();
-  }
-
-  set tokenId(value: BigInt) {
-    this.set("tokenId", Value.fromBigInt(value));
-  }
-}
-
-export class LinkVaultTransferVault extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(
-      id != null,
-      "Cannot save LinkVaultTransferVault entity without an ID"
-    );
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type LinkVaultTransferVault must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("LinkVaultTransferVault", id.toString(), this);
-    }
-  }
-
-  static load(id: string): LinkVaultTransferVault | null {
-    return changetype<LinkVaultTransferVault | null>(
-      store.get("LinkVaultTransferVault", id)
-    );
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get vaultID(): BigInt {
-    let value = this.get("vaultID");
-    return value!.toBigInt();
-  }
-
-  set vaultID(value: BigInt) {
-    this.set("vaultID", Value.fromBigInt(value));
-  }
-
-  get from(): Bytes {
-    let value = this.get("from");
-    return value!.toBytes();
-  }
-
-  set from(value: Bytes) {
-    this.set("from", Value.fromBytes(value));
-  }
-
-  get to(): Bytes {
-    let value = this.get("to");
-    return value!.toBytes();
-  }
-
-  set to(value: Bytes) {
-    this.set("to", Value.fromBytes(value));
-  }
-}
-
-export class LinkVaultWithdrawCollateral extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(
-      id != null,
-      "Cannot save LinkVaultWithdrawCollateral entity without an ID"
-    );
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type LinkVaultWithdrawCollateral must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("LinkVaultWithdrawCollateral", id.toString(), this);
-    }
-  }
-
-  static load(id: string): LinkVaultWithdrawCollateral | null {
-    return changetype<LinkVaultWithdrawCollateral | null>(
-      store.get("LinkVaultWithdrawCollateral", id)
-    );
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get vaultID(): BigInt {
-    let value = this.get("vaultID");
-    return value!.toBigInt();
-  }
-
-  set vaultID(value: BigInt) {
-    this.set("vaultID", Value.fromBigInt(value));
-  }
-
-  get amount(): BigInt {
-    let value = this.get("amount");
-    return value!.toBigInt();
-  }
-
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
+  set active(value: boolean) {
+    this.set("active", Value.fromBoolean(value));
   }
 }

@@ -7,32 +7,25 @@ dataSources:
     network: matic
     source:
       address: "0x3fd939B017b31eaADF9ae50C7fF7Fa5c0661d47C"
-      abi: WethVault
+      abi: Vault
+      startBlock: 17202893
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        - Approval
-        - ApprovalForAll
         - BorrowToken
         - CreateVault
         - DepositCollateral
         - DestroyVault
         - LiquidateVault
-        - OwnershipTransferred
         - PayBackToken
-        - Transfer
         - TransferVault
         - WithdrawCollateral
       abis:
-        - name: WethVault
-          file: ./abis/WethVault.json
+        - name: Vault
+          file: ./abis/Vault.json
       eventHandlers:
-        - event: Approval(indexed address,indexed address,indexed uint256)
-          handler: handleApproval
-        - event: ApprovalForAll(indexed address,indexed address,bool)
-          handler: handleApprovalForAll
         - event: BorrowToken(uint256,uint256)
           handler: handleBorrowToken
         - event: CreateVault(uint256,address)
@@ -43,66 +36,10 @@ dataSources:
           handler: handleDestroyVault
         - event: LiquidateVault(uint256,address,address,uint256,uint256,uint256)
           handler: handleLiquidateVault
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
         - event: PayBackToken(uint256,uint256,uint256)
           handler: handlePayBackToken
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
         - event: TransferVault(uint256,address,address)
           handler: handleTransferVault
         - event: WithdrawCollateral(uint256,uint256)
           handler: handleWithdrawCollateral
-      file: ./src/weth-vault.ts
-  - kind: ethereum
-    name: LinkVault
-    network: matic
-    source:
-      address: "0x61167073E31b1DAd85a3E531211c7B8F1E5cAE72"
-      abi: LinkVault
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      entities:
-        - LinkVaultApproval
-        - LinkVaultApprovalForAll
-        - LinkVaultBorrowToken
-        - LinkVaultCreateVault
-        - LinkVaultDepositCollateral
-        - LinkVaultDestroyVault
-        - LinkVaultLiquidateVault
-        - LinkVaultOwnershipTransferred
-        - LinkVaultPayBackToken
-        - LinkVaultTransfer
-        - LinkVaultTransferVault
-        - LinkVaultWithdrawCollateral
-      abis:
-        - name: LinkVault
-          file: ./abis/LinkVault.json
-      eventHandlers:
-        - event: LinkVaultApproval(indexed address,indexed address,indexed uint256)
-          handler: handleLinkVaultApproval
-        - event: LinkVaultApprovalForAll(indexed address,indexed address,bool)
-          handler: handleLinkVaultApprovalForAll
-        - event: LinkVaultBorrowToken(uint256,uint256)
-          handler: handleLinkVaultBorrowToken
-        - event: LinkVaultCreateVault(uint256,address)
-          handler: handleLinkVaultCreateVault
-        - event: LinkVaultDepositCollateral(uint256,uint256)
-          handler: handleLinkVaultDepositCollateral
-        - event: LinkVaultDestroyVault(uint256)
-          handler: handleLinkVaultDestroyVault
-        - event: LinkVaultLiquidateVault(uint256,address,address,uint256,uint256,uint256)
-          handler: handleLinkVaultLiquidateVault
-        - event: LinkVaultOwnershipTransferred(indexed address,indexed address)
-          handler: handleLinkVaultOwnershipTransferred
-        - event: LinkVaultPayBackToken(uint256,uint256,uint256)
-          handler: handleLinkVaultPayBackToken
-        - event: LinkVaultTransfer(indexed address,indexed address,indexed uint256)
-          handler: handleLinkVaultTransfer
-        - event: LinkVaultTransferVault(uint256,address,address)
-          handler: handleLinkVaultTransferVault
-        - event: LinkVaultWithdrawCollateral(uint256,uint256)
-          handler: handleLinkVaultWithdrawCollateral
-      file: ./src/link-vault.ts
+      file: ./src/vault.ts
