@@ -2,6 +2,9 @@
   "matic": {
     "WethVault": {
       "address": "0x3fd939B017b31eaADF9ae50C7fF7Fa5c0661d47C"
+    },
+    "LinkVault": {
+      "address": "0x61167073E31b1DAd85a3E531211c7B8F1E5cAE72"
     }
   }
 }

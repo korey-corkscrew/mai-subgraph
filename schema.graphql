@@ -4,3 +4,82 @@ type ExampleEntity @entity {
   owner: Bytes! # address
   approved: Bytes! # address
 }
+type LinkVaultApproval @entity {
+  id: ID!
+  owner: Bytes! # address
+  approved: Bytes! # address
+  tokenId: BigInt! # uint256
+}
+
+type LinkVaultApprovalForAll @entity {
+  id: ID!
+  owner: Bytes! # address
+  operator: Bytes! # address
+  approved: Boolean! # bool
+}
+
+type LinkVaultBorrowToken @entity {
+  id: ID!
+  vaultID: BigInt! # uint256
+  amount: BigInt! # uint256
+}
+
+type LinkVaultCreateVault @entity {
+  id: ID!
+  vaultID: BigInt! # uint256
+  creator: Bytes! # address
+}
+
+type LinkVaultDepositCollateral @entity {
+  id: ID!
+  vaultID: BigInt! # uint256
+  amount: BigInt! # uint256
+}
+
+type LinkVaultDestroyVault @entity {
+  id: ID!
+  vaultID: BigInt! # uint256
+}
+
+type LinkVaultLiquidateVault @entity {
+  id: ID!
+  vaultID: BigInt! # uint256
+  owner: Bytes! # address
+  buyer: Bytes! # address
+  debtRepaid: BigInt! # uint256
+  collateralLiquidated: BigInt! # uint256
+  closingFee: BigInt! # uint256
+}
+
+type LinkVaultOwnershipTransferred @entity {
+  id: ID!
+  previousOwner: Bytes! # address
+  newOwner: Bytes! # address
+}
+
+type LinkVaultPayBackToken @entity {
+  id: ID!
+  vaultID: BigInt! # uint256
+  amount: BigInt! # uint256
+  closingFee: BigInt! # uint256
+}
+
+type LinkVaultTransfer @entity {
+  id: ID!
+  from: Bytes! # address
+  to: Bytes! # address
+  tokenId: BigInt! # uint256
+}
+
+type LinkVaultTransferVault @entity {
+  id: ID!
+  vaultID: BigInt! # uint256
+  from: Bytes! # address
+  to: Bytes! # address
+}
+
+type LinkVaultWithdrawCollateral @entity {
+  id: ID!
+  vaultID: BigInt! # uint256
+  amount: BigInt! # uint256
+}
